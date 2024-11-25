@@ -1,72 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess the Number Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="https://glitch.com/favicon.ico" />
+    h2 {
+      font-size: 36px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
 
-    <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-    <title>Hello World!</title>
+    .game-container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      text-align: center;
+      width: 380px; /* Increased width for more space */
+      box-sizing: border-box;
+      margin-top: 30px;
+    }
 
-    <!-- The website stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    p {
+      font-size: 18px;
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
 
-    <!-- The website JavaScript file -->
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-    <div class="wrapper">
-      <div class="content" role="main">
-        <h1 class="title">Hello World!</h1>
-        <img
-          src="https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2Fillustration.svg?v=1618177344016"
-          class="illustration"
-          alt="Editor illustration"
-          title="Click the image!"
-        />
-        <div class="instructions">
-          <h2>Using this project</h2>
-          <p>
-            This is the Glitch <strong>Hello Website</strong> project. You can
-            use it to build your own site. Check out the code in the editor and open
-            the <span class="fileopener" data-file="TODO.md" data-line="0"
-              >TODO</span> for next steps!
-          </p>
-          <!--  🚧 TODO: ADD BUTTON HERE -->
+    input {
+      padding: 14px;
+      font-size: 18px;
+      width: 100%;
+      border-radius: 6px;
+      border: 2px solid #3498db;
+      margin: 12px 0;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
 
-          <!-- Once you've added the button from TODO.md, click it in the page -->
-          <!-- Check out the function in script.js to see how it works -->
-        </div>
-      </div>
-    </div>
-    <!-- The footer holds our remix button — you can keep or delete it ✂ -->
-    <footer class="footer">
-      <div class="links"></div>
-      <a
-        class="btn--remix"
-        target="_top"
-        href="https://glitch.com/edit/#!/remix/glitch-hello-website"
-      >
-        <img
-          src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-          alt=""
-        />
-        Remix on Glitch
-      </a>
-    </footer>
-  </body>
+    input:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+
+    button {
+      padding: 14px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #result {
+      font-weight: bold;
+      margin-top: 25px;
+      font-size: 22px;
+      color: #2ecc71; /* Green color for winning message */
+    }
+
+    #attempts {
+      font-size: 18px;
+      color: #e74c3c; /* Red color for attempts */
+      margin-bottom: 20px;
+    }
+
+    /* Animations */
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(-10px); }
+      50% { transform: translateY(0); }
+      75% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Apply animation for incorrect guess */
+    .shake {
+      animation: shake 0.5s ease;
+    }
+
+    /* Apply animation for winning message */
+    .bounce {
+      animation: bounce 1s ease infinite;
+    }
+
+    /* Fade-in animation for "Play Again" button */
+    .fadeIn {
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Play Again Button */
+    #playAgainBtn {
+      padding: 14px 20px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      transition: background-color 0.3s;
+    }
+
+    #playAgainBtn:hover {
+      background-color: #27ae60;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+  <h2>Guess the Number Game</h2>
+  <p>I'm thinking of a number between 1 and 1000. Can you guess it?</p>
+
+  <label for="guess">Enter your guess:</label>
+  <input type="number" id="guess" min="1" max="1000" placeholder="Enter a number...">
+  <button onclick="checkGuess()">Submit Guess</button>
+
+  <p>Attempts Left: <span id="attempts">15</span></p>
+  <div id="result"></div>
+  <button id="playAgainBtn" onclick="playAgain()" class="fadeIn">Play Again</button>
+</div>
+
+<script>
+  let secretNumber, attempts, gameOver;
+
+  // Function to start a new game
+  function startGame() {
+    secretNumber = Math.floor(Math.random() * 1000) + 1;  // Random number between 1 and 1000
+    attempts = 15;  // Number of attempts
+    gameOver = false;
+    document.getElementById('result').textContent = "";
+    document.getElementById('attempts').textContent = attempts;
+    document.getElementById('playAgainBtn').style.display = "none";
+  }
+
+  // Function to check the player's guess
+  function checkGuess() {
+    if (gameOver) return;
+
+    let playerGuess = document.getElementById('guess').value;
+    const result = document.getElementById('result');
+    const attemptsLeft = document.getElementById('attempts');
+    
+    if (playerGuess == "") {
+      result.textContent = "Please enter a guess!";
+      return;
+    }
+
+    if (playerGuess < 1 || playerGuess > 1000) {
+      result.textContent = "Please enter a number between 1 and 1000!";
+      return;
+    }
+
+    attempts--;  // Decrease the number of attempts left
+    attemptsLeft.textContent = attempts;
+
+    if (playerGuess == secretNumber) {
+      result.textContent = `Congratulations! You guessed the number ${secretNumber}!`;
+      result.classList.add('bounce');  // Apply bounce animation to the result
+      gameOver = true;
+      document.getElementById('playAgainBtn').style.display = "inline-block";  // Show play again button
+    } else if (playerGuess < secretNumber) {
+      result.textContent = "Too low! Try again.";
+      document.getElementById('guess').classList.add('shake');  // Add shake effect for incorrect guess
+      setTimeout(() => {
+        document.getElementById('guess').classList.remove('shake');  // Remove shake effect after animation
+      }, 500);
+    } else {
+      result.textContent = "Too high! Try again.";
+      document.getElementById('guess').classList.add('shake');  // Add shake effect for incorrect guess
+      setTimeout(() => {
+        document.getElementById('guess').classList.remove('shake');  // Remove shake effect after animation
+      }, 500);
+    }
+
+    // End the game if out of attempts
+    if (attempts === 0) {
+      result.textContent = `Game over! The correct number was ${secretNumber}.`;
+      gameOver = true;
+      document.getElementById('playAgainBtn').style.display = "inline-block";  // Show play again button
+    }
+  }
+
+  // Function to start a new game when "Play Again" is clicked
+  function playAgain() {
+    startGame();
+    document.getElementById('guess').value = "";  // Clear the input field
+  }
+
+  // Event listener for pressing "Enter" to submit the guess
+  document.getElementById('guess').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      checkGuess();  // Submit the guess if Enter is pressed
+    }
+  });
+
+  // Start the game when the page loads
+  startGame();
+</script>
+
+</body>
 </html>
